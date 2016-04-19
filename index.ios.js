@@ -9,26 +9,35 @@ import React, {
   Component,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableHighlight
 } from 'react-native';
-import {createStore} from 'redux'
-import {Provider} from 'react-redux'
+import {createStore, bindActionCreators} from 'redux'
+import {connect, Provider} from 'react-redux'
+import {setFlag} from './reducer'
 
-class TestHMR24 extends Component {
+class TestHMR24_ extends Component {
+  onPress = () => {
+    this.props.setFlag()
+  }
   render() {
+    const color = this.props.flag ? 'white' : 'grey'
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+      <TouchableHighlight onPress={this.onPress} style={{flex: 1}}>
+        <View style={[styles.container, {backgroundColor: color}]}>
+          <Text style={styles.welcome}>
+            Welcome to React Native!
+          </Text>
+          <Text style={styles.instructions}>
+            To get started, edit index.ios.js
+          </Text>
+          <Text style={styles.instructions}>
+            Press Cmd+R to reload,{'\n'}
+            Cmd+D or shake for dev menu
+          </Text>
+        </View>
+      </TouchableHighlight>
     );
   }
 }
@@ -52,11 +61,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const reducer = require('./reducer')
+const TestHMR24 = connect(state => state, (dispatch) => bindActionCreators({setFlag}, dispatch))(TestHMR24_)
+
+const reducer = require('./reducer').default
 const store = createStore(reducer)
 if (module.hot) {
   module.hot.accept('./reducer', () => {
-    const nextReducer = require('./reducer')
+    const nextReducer = require('./reducer').default
     store.replaceReducer(nextReducer)
   })
 }
