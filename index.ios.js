@@ -12,16 +12,17 @@ import React, {
   View,
   TouchableHighlight
 } from 'react-native';
-import {createStore, bindActionCreators} from 'redux'
+import {bindActionCreators} from 'redux'
 import {connect, Provider} from 'react-redux'
 import {setFlag} from './reducer'
+import configureStore from './configureStore'
 
 class TestHMR24_ extends Component {
   onPress = () => {
     this.props.setFlag()
   }
   render() {
-    const color = this.props.flag ? 'white' : 'grey'
+    const color = this.props.flag ? 'red' : 'grey'
 
     return (
       <TouchableHighlight onPress={this.onPress} style={{flex: 1}}>
@@ -63,14 +64,7 @@ const styles = StyleSheet.create({
 
 const TestHMR24 = connect(state => state, (dispatch) => bindActionCreators({setFlag}, dispatch))(TestHMR24_)
 
-const reducer = require('./reducer').default
-const store = createStore(reducer)
-if (module.hot) {
-  module.hot.accept('./reducer', () => {
-    const nextReducer = require('./reducer').default
-    store.replaceReducer(nextReducer)
-  })
-}
+const store = configureStore()
 
 class App extends Component {
   render () {
