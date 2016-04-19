@@ -11,6 +11,8 @@ import React, {
   Text,
   View
 } from 'react-native';
+import {createStore} from 'redux'
+import {Provider} from 'react-redux'
 
 class TestHMR24 extends Component {
   render() {
@@ -50,4 +52,23 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('TestHMR24', () => TestHMR24);
+const reducer = require('./reducer')
+const store = createStore(reducer)
+if (module.hot) {
+  module.hot.accept('./reducer', () => {
+    const nextReducer = require('./reducer')
+    store.replaceReducer(nextReducer)
+  })
+}
+
+class App extends Component {
+  render () {
+    return (
+      <Provider store={store}>
+        <TestHMR24/>
+      </Provider>
+    )
+  }
+}
+
+AppRegistry.registerComponent('TestHMR24', () => App);
